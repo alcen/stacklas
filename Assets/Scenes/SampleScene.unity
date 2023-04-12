@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 138140678}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30, y: 0, z: 80}
+  m_LocalPosition: {x: 30, y: 1, z: 80}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 343450594}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 30, y: 0, z: 30}
-  m_LocalScale: {x: 25, y: 2, z: 25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1212180159}
@@ -540,7 +540,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 688055715}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 80, y: 0, z: 30}
+  m_LocalPosition: {x: 80, y: 1, z: 30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -775,9 +775,9 @@ MonoBehaviour:
   cuboidPrefab: {fileID: 1935725589311649418, guid: 132dcea3e75bb2048a4b3f1d4d428510, type: 3}
   parentOfCuboids: {fileID: 343450595}
   perfectionThreshhold: 0
-  cuboidSpeed: 0.5
+  cuboidSpeed: 0.15
   cuboidOscillationDistance: 30
-  cuboidHeight: 0
+  cuboidHeight: 2
   score: 0
   xAxisWidth: 0
   zAxisWidth: 0
@@ -1070,6 +1070,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 343450595}
     m_Modifications:
+    - target: {fileID: 1844723163394896379, guid: 132dcea3e75bb2048a4b3f1d4d428510, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1935725589311649418, guid: 132dcea3e75bb2048a4b3f1d4d428510, type: 3}
       propertyPath: m_Name
       value: InitialCuboid

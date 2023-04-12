@@ -16,16 +16,18 @@ public class GameManager : Singleton<GameManager>
     [Header("Game constants")]
     // How many frames allowed for perfection
     [SerializeField] private int perfectionThreshhold = 1;
-    // Cuboid speed is represented in units per frame update
-    [SerializeField] private double cuboidSpeed = 1.00f;
+    // Cuboid speed is represented in cuboid lengths per frame update
+    [SerializeField] private double cuboidSpeed = 0.2f;
     [SerializeField] private double cuboidOscillationDistance = 30.0f;
+    // Width of original cuboid in units
+    [SerializeField] private float originalCuboidWidth = 25.0f;
     // Determines the spacing between cuboids
     [SerializeField] private double cuboidHeight = 2.0f;
 
     [Header("Player data")]
     [SerializeField] private int score = 0;
-    [SerializeField] private double xAxisWidth = 0;
-    [SerializeField] private double zAxisWidth = 0;
+    [SerializeField] private float xAxisWidth = 0;
+    [SerializeField] private float zAxisWidth = 0;
 
     
     // GameObject of cuboid currently being stacked
@@ -35,32 +37,60 @@ public class GameManager : Singleton<GameManager>
     private GameObject prevCuboid;
     // Whether the next cuboid is spawning left or right
     private bool isSpawningLeft = false;
+    private bool disableClicks = false;
+    private float prevCuboidXWidth = 0.0f;
+    private float prevCuboidZWidth = 0.0f;
 
     void Start()
     {
+        xAxisWidth = 1;
+        zAxisWidth = 1;
         InitialiseGame();
     }
 
     // The main game loop
     void Update()
     {
-        if (Input.GetButton("Fire1"))
+        if (!disableClicks && Input.GetButton("Fire1"))
         {
+            disableClicks = true;
             // Check for stacked cuboid position and compare to initial
-
-
             Debug.Log("Clicked");
-        }
+            currentCuboid.GetComponent<StackingCuboid>().enabled = false;     
+            Vector3 currentCuboidPos = currentCuboid.transform.position;
+            Vector3 prevCuboidPos = prevCuboid.transform.position;
+            Vector3 distanceFromCentre = currentCuboidPos - prevCuboidPos;
+            // // Assume cuboids are axis-aligned
+            // bool isZAlignedCuboid = distanceFromCentre.z > distanceFromCentre.x;
+            // float originalCuboidWidth = isZAlignedCuboid ? prevCuboidZWidth : prevCuboidXWidth;
+            // float newCuboidWidthRatio = distanceFromCentre.magnitude / originalCuboidWidth;
+            // Debug.Log(distanceFromCentre.magnitude);
+            // Debug.Log(newCuboidWidthRatio);
+            // if (isZAlignedCuboid)
+            // {
+            //     zAxisWidth = newCuboidWidthRatio;
+            //     prevCuboidZWidth *= newCuboidWidthRatio;
+            // }
+            // else
+            // {
+            //     xAxisWidth = newCuboidWidthRatio;
+            //     prevCuboidXWidth *= newCuboidWidthRatio;
+            // }
+            // currentCuboid.GetComponent<StackingCuboid>().SetScale(xAxisWidth, zAxisWidth);
 
-        // If either score is less than 0, the game ends
-        if (xAxisWidth < 0 || zAxisWidth < 0)
-        {
-            // Game over
-            Debug.Log("Game over");
-        }
-        else
-        {
-            score++;
+            // If either score is less than 0, the game ends
+            if (xAxisWidth < 0 || zAxisWidth < 0)
+            {
+                // Game over
+                Debug.Log("Game over");
+            }
+            else
+            {
+                score++;            
+                xAxisWidth = 1;
+                zAxisWidth = 1;
+                SpawnCuboid();
+            }
         }
     }
 
@@ -70,11 +100,13 @@ public class GameManager : Singleton<GameManager>
         score = 0;
         xAxisWidth = cuboidPrefab.transform.localScale.x;
         zAxisWidth = cuboidPrefab.transform.localScale.z;
+        prevCuboidXWidth = originalCuboidWidth;
+        prevCuboidZWidth = originalCuboidWidth;
 
         // Delete all existing cuboids
         foreach (Transform child in parentOfCuboids.transform)
         {
-            Destroy(child.gameObject);
+            // Destroy(child.gameObject);
         }
 
         // Create the first cuboid
@@ -115,8 +147,11 @@ public class GameManager : Singleton<GameManager>
                                        cuboidOscillationDistance);
         // Set a random colour for the new cuboid
         cuboidProperties.SetColour(GetRandomColour());
+        // Set scale of the new cuboid
+        cuboidProperties.SetScale(xAxisWidth, zAxisWidth);
         prevCuboid = currentCuboid;
         currentCuboid = newCuboid;
+        isSpawningLeft = !isSpawningLeft;
     }
 
     // Helper function to generate a random colour

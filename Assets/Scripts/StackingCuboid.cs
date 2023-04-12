@@ -12,6 +12,7 @@ public class StackingCuboid : MonoBehaviour
     // Helper fields for motion of the cuboid
     private Vector3 movingDirection;
     private bool isGoingInReverse = false;
+    private bool hasEnteredOscillationZone = false;
 
     public void SetProperties(double cuboidSpeed,
                               Vector3 oscillationPoint,
@@ -30,6 +31,12 @@ public class StackingCuboid : MonoBehaviour
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", newColour);
     }
 
+    public void SetScale(float scaleX, float scaleZ)
+    {
+        gameObject.transform.localScale = new Vector3(
+            scaleX, gameObject.transform.localScale.y, scaleZ);
+    }
+
     void Update()
     {
         Vector3 motionVector = movingDirection;
@@ -44,10 +51,17 @@ public class StackingCuboid : MonoBehaviour
         double distanceFromOscillationPoint = (newPosition - oscillationPoint).magnitude;
         if (distanceFromOscillationPoint > oscillationDistance)
         {
-            isGoingInReverse = !isGoingInReverse;
-            // Simulate the cuboid going to the limit and "bouncing" back
-            newPosition = gameObject.transform.position - motionVector *
-                            (float)(distanceFromOscillationPoint - oscillationDistance);
+            if (hasEnteredOscillationZone)
+            {
+                isGoingInReverse = !isGoingInReverse;
+                // Simulate the cuboid going to the limit and "bouncing" back
+                newPosition = gameObject.transform.position - motionVector *
+                                (float)(distanceFromOscillationPoint - oscillationDistance);
+            }
+        }
+        else
+        {
+            hasEnteredOscillationZone = true;
         }
         // Ignore y value so that the height does not change
         gameObject.transform.position = new Vector3(
